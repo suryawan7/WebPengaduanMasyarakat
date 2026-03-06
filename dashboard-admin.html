@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Admin</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1e293b',
+            accent: '#00ffff',
+            warning: '#facc15',
+            success: '#22c55e',
+            danger: '#ef4444',
+          },
+          dropShadow: {
+            neon: '0 0 8px #00ffff, 0 0 16px #00ffff',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-white flex min-h-screen transition-colors duration-300">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-primary text-white flex flex-col justify-between p-6 fixed h-full dark:bg-gray-800">
+    <div>
+      <div class="mb-8 flex items-center gap-3">
+        <div id="profileInitial" class="w-12 h-12 rounded-full bg-white text-primary flex items-center justify-center font-bold text-lg">?</div>
+        <div>
+          <h2 class="text-lg font-semibold" id="userName">Loading...</h2>
+          <p class="text-sm text-gray-300 dark:text-gray-500">Administrasi</p>
+        </div>
+      </div>
+      <nav class="space-y-4">
+        <button id="toggleTheme" class="w-full px-4 py-2 rounded bg-gray-700 hover:bg-white hover:text-gray-900 dark:hover:bg-white/10 transition">🌓 Mode</button>
+        <a href="login.html" class="block px-4 py-2 rounded bg-danger text-center hover:bg-red-700 transition">Logout</a>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 flex-1 p-8 space-y-6">
+    <header>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-accent dark:drop-shadow-neon">Dashboard Admin</h1>
+      <p class="text-sm text-gray-600 dark:text-white/70">Pengelolaan Pengaduan Masyarakat</p>
+    </header>
+
+    <!-- Statistik -->
+    <div id="statCards" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <a href="laporan-masuk.html" class="bg-blue-600 text-white p-6 rounded-xl shadow hover:opacity-90 transition block dark:drop-shadow-neon">
+        <h3 class="text-xl font-bold" id="totalLaporan">0 Laporan Masuk</h3>
+        <p class="text-sm">Total Laporan Masuk</p>
+      </a>
+      <a href="belum-ditanggapi.html" class="bg-red-600 text-white p-6 rounded-xl shadow hover:opacity-90 transition block dark:drop-shadow-neon">
+        <h3 class="text-xl font-bold" id="belumTanggapi">0 Belum Ditanggapi</h3>
+        <p class="text-sm">Status: Menunggu</p>
+      </a>
+      <a href="sudah-ditanggapi.html" class="bg-green-600 text-white p-6 rounded-xl shadow hover:opacity-90 transition block dark:drop-shadow-neon">
+        <h3 class="text-xl font-bold" id="sudahTanggapi">0 Sudah Ditanggapi</h3>
+        <p class="text-sm">Status: Ditanggapi</p>
+      </a>
+      <a href="regispetugas.html" class="bg-yellow-400 text-black p-6 rounded-xl shadow hover:opacity-90 transition block dark:drop-shadow-neon">
+        <h3 class="text-xl font-bold">➕ Tambah Petugas</h3>
+        <p class="text-sm">Menuju Form Registrasi Petugas</p>
+      </a>
+    </div>
+
+    <!-- Filter dan Export -->
+    <div class="flex flex-wrap items-center gap-4 mb-4">
+      <select id="waktuFilter" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-white/10 rounded px-4 py-2">
+        <option value="semua">🔍 Semua</option>
+        <option value="harian">📅 Hari Ini</option>
+        <option value="bulanan">🗓️ Bulan Ini</option>
+        <option value="tahunan">📆 Tahun Ini</option>
+      </select>
+      <button id="generatePDF" class="bg-accent text-black dark:text-white px-4 py-2 rounded hover:bg-cyan-300 dark:hover:bg-cyan-600 transition dark:drop-shadow-neon">📄 Export PDF</button>
+      <button id="generateCSV" class="bg-accent text-black dark:text-white px-4 py-2 rounded hover:bg-cyan-300 dark:hover:bg-cyan-600 transition dark:drop-shadow-neon">📊 Export CSV</button>
+    </div>
+
+    <!-- Tabel -->
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border dark:border-white/10">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-accent dark:drop-shadow-neon">Daftar Pengaduan</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm table-auto">
+          <thead class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white">
+            <tr>
+              <th class="px-4 py-3 text-left">Username</th>
+              <th class="px-4 py-3 text-left">Judul</th>
+              <th class="px-4 py-3 text-left">Deskripsi</th>
+              <th class="px-4 py-3 text-left">Status</th>
+              <th class="px-4 py-3 text-left">Waktu</th>
+              <th class="px-4 py-3 text-left">Bukti</th>
+            </tr>
+          </thead>
+          <tbody id="adminComplaintList"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Script Mode & PDF -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const root = document.documentElement;
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") root.classList.add("dark");
+
+      document.getElementById("toggleTheme").addEventListener("click", () => {
+        root.classList.toggle("dark");
+        localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+      });
+
+      const userName = localStorage.getItem("loggedInUser") || "Admin";
+      document.getElementById("userName").textContent = userName;
+      document.getElementById("profileInitial").textContent = userName.charAt(0).toUpperCase();
+
+      // Export PDF
+      document.getElementById("generatePDF").addEventListener("click", () => {
+        const filter = document.getElementById("waktuFilter").value;
+        const now = new Date();
+        const rows = [];
+
+        for (let key in localStorage) {
+          if (key.startsWith("pengaduan_")) {
+            const username = key.replace("pengaduan_", "");
+            const data = JSON.parse(localStorage.getItem(key)) || [];
+
+            data.forEach(c => {
+              const time = new Date(c.time);
+              let include = true;
+
+              if (filter === "harian") include = time.toDateString() === now.toDateString();
+              else if (filter === "bulanan") include = time.getMonth() === now.getMonth() && time.getFullYear() === now.getFullYear();
+              else if (filter === "tahunan") include = time.getFullYear() === now.getFullYear();
+
+              if (include) rows.push([username, c.title, c.description, c.status, c.time]);
+            });
+          }
+        }
+
+        if (rows.length === 0) return alert("Tidak ada data untuk filter tersebut.");
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text(`Laporan Pengaduan (${filter.toUpperCase()})`, 14, 15);
+        doc.autoTable({ startY: 20, head: [["Username", "Judul", "Deskripsi", "Status", "Waktu"]], body: rows, styles: { fontSize: 8 } });
+        doc.save(`laporan-${filter}.pdf`);
+      });
+
+      // Export CSV
+      document.getElementById("generateCSV").addEventListener("click", () => {
+        const filter = document.getElementById("waktuFilter").value;
+        const now = new Date();
+        const rows = [];
+
+        for (let key in localStorage) {
+          if (key.startsWith("pengaduan_")) {
+            const username = key.replace("pengaduan_", "");
+            const data = JSON.parse(localStorage.getItem(key)) || [];
+
+            data.forEach(c => {
+              const time = new Date(c.time);
+              let include = true;
+
+              if (filter === "harian") include = time.toDateString() === now.toDateString();
+              else if (filter === "bulanan") include = time.getMonth() === now.getMonth() && time.getFullYear() === now.getFullYear();
+              else if (filter === "tahunan") include = time.getFullYear() === now.getFullYear();
+
+              if (include) rows.push([username, c.title, c.description, c.status, c.time]);
+            });
+          }
+        }
+
+        if (rows.length === 0) return alert("Tidak ada data untuk filter tersebut.");
+
+        let csv = "Username,Judul,Deskripsi,Status,Waktu\n";
+        rows.forEach(row => {
+          csv += row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(",") + "\n";
+        });
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `laporan-${filter}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="dashboard-admin.js" defer></script>
+</body>
+</html>

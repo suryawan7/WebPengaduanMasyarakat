@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Pengaduan Masyarakat</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f172a',
+            accent: '#00ffff',
+            glow: '#38bdf8',
+          },
+          dropShadow: {
+            neon: '0 0 8px #00ffff, 0 0 16px #00ffff',
+          },
+          animation: {
+            pulseGlow: 'pulseGlow 2s infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 10px #00ffff, 0 0 20px #00ffff' },
+              '50%': { boxShadow: '0 0 20px #00ffff, 0 0 40px #00ffff' },
+            },
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="relative bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+  <!-- Background Gambar Redup -->
+  <div class="absolute inset-0 -z-10">
+    <img src="PengaduanMasyarakatt.jpeg"
+         alt="Aksi masyarakat"
+         class="w-full h-full object-cover opacity-20 animate" />
+  </div>
+
+  <!-- Form Login -->
+  <div class="w-full max-w-md bg-black/50 backdrop-blur-lg border border-glow rounded-2xl p-8 shadow-2xl drop-shadow-neon">
+    <h2 class="text-4xl font-bold text-center mb-8 text-accent drop-shadow-neon">Login</h2>
+
+    <form method="POST" action="login.php" class="space-y-5">
+      <div>
+        <label for="username" class="text-sm text-accent">Username</label>
+        <input type="text" id="username" name="username" required
+          class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent placeholder-white/40 focus:ring-2 focus:ring-accent focus:outline-none transition shadow-md"
+          placeholder="Masukkan username" />
+      </div>
+
+      <div>
+        <label for="password" class="text-sm text-accent">Password</label>
+        <input type="password" id="password" minlength="8" name="password" required
+          class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent placeholder-white/40 focus:ring-2 focus:ring-accent focus:outline-none transition shadow-md"
+          placeholder="••••••••" />
+      </div>
+
+      <div>
+        <label for="role" class="text-sm text-accent">Peran</label>
+        <select id="role" name="role" required
+          class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent focus:ring-2 focus:ring-accent focus:outline-none transition shadow-md">
+          <option value="">-- Pilih Peran --</option>
+          <option value="masyarakat">Masyarakat</option>
+          <option value="petugas">Petugas</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-accent text-black font-semibold py-2 rounded-xl shadow-lg hover:bg-cyan-300 hover:scale-105 transition-all animate-pulseGlow">
+        Masuk
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-white/70">
+      Belum punya akun?
+      <a href="register.html" class="text-accent font-medium hover:underline">Daftar di sini</a>
+    </p>
+  </div>
+
+  <!-- Modal Error -->
+  <div id="errorModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+    <div class="bg-gray-900 border border-red-500 text-white rounded-xl shadow-lg p-6 w-full max-w-sm text-center">
+      <h2 class="text-xl font-bold text-red-400 mb-2">Login Gagal</h2>
+      <p id="errorMessage" class="text-sm mb-4">Username, password, atau peran tidak sesuai.</p>
+      <button id="closeErrorModal"
+        class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition">Tutup</button>
+    </div>
+  </div>
+
+  <script src="login.js" defer></script>
+</body>
+</html>

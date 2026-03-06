@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar - Pengaduan Masyarakat</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f172a',
+            accent: '#00ffff',
+            glow: '#38bdf8',
+          },
+          dropShadow: {
+            neon: '0 0 8px #00ffff, 0 0 16px #00ffff',
+          },
+          animation: {
+            pulseGlow: 'pulseGlow 2s infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 10px #00ffff, 0 0 20px #00ffff' },
+              '50%': { boxShadow: '0 0 20px #00ffff, 0 0 40px #00ffff' },
+            },
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="relative bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+  <!-- Background Gambar Redup -->
+  <div class="absolute inset-0 -z-10">
+    <img src="PengaduanMasyarakatt.jpeg" alt="Background"
+         class="w-full h-full object-cover opacity-20 animate" />
+  </div>
+
+  <!-- Form Registrasi -->
+  <div class="w-full max-w-md bg-black/50 backdrop-blur-lg border border-glow p-8 rounded-2xl shadow-2xl drop-shadow-neon">
+    <h2 class="text-3xl font-bold text-center mb-6 text-accent drop-shadow-neon"> Daftar Akun Baru</h2>
+    
+    <form method="POST" action="register.php" class="space-y-5">
+  <div>
+    <label for="username" class="text-sm text-accent">Username</label>
+    <input type="text" id="username" name="username" required
+      class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent placeholder-white/40 focus:ring-2 focus:ring-accent focus:outline-none transition shadow" />
+  </div>
+  <div>
+    <label for="email" class="text-sm text-accent">Email</label>
+    <input type="email" id="email" name="email" required
+      class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent placeholder-white/40 focus:ring-2 focus:ring-accent focus:outline-none transition shadow" />
+  </div>
+  <div>
+    <label for="password" class="text-sm text-accent">Password</label>
+    <input type="password" id="password" name="password" required
+      class="mt-1 w-full px-4 py-2 rounded-xl bg-gray-900 border border-accent text-accent placeholder-white/40 focus:ring-2 focus:ring-accent focus:outline-none transition shadow" />
+  </div>
+  <button type="submit"
+    class="w-full bg-accent hover:bg-cyan-300 text-black font-semibold py-2 rounded-xl transition-all animate-pulseGlow">
+    Daftar
+  </button>
+</form>
+
+
+    <p class="mt-6 text-center text-sm text-white/70">
+      Sudah punya akun?
+      <a href="login.html" class="text-accent font-medium hover:underline">Masuk di sini</a>
+    </p>
+  </div>
+
+  <!-- Modal Sukses -->
+  <div id="successModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-gray-900 text-white border border-green-500 p-6 rounded-xl shadow-xl text-center">
+      <h3 class="text-lg font-bold text-green-400">✅ Registrasi Berhasil!</h3>
+      <p class="mt-2">Mengalihkan ke halaman login...</p>
+    </div>
+  </div>
+
+  <!-- Modal Error -->
+  <div id="errorModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-gray-900 text-white border border-red-500 p-6 rounded-xl shadow-xl text-center">
+      <h3 class="text-lg font-bold text-red-400">❌ Registrasi Gagal!</h3>
+      <p class="mt-2">Harap isi semua field dengan benar.</p>
+      <button id="closeErrorModal" class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Tutup</button>
+    </div>
+  </div>
+
+  <script src="register.js" defer></script>
+</body>
+</html>

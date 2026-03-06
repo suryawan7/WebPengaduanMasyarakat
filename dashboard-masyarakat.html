@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Masyarakat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            accent: '#00ffff',
+            glow: '#38bdf8',
+            danger: '#ef4444',
+          },
+          dropShadow: {
+            neon: '0 0 8px #00ffff, 0 0 16px #00ffff',
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white flex min-h-screen transition-colors duration-300">
+
+  <!-- Sidebar tetap -->
+  <aside class="w-64 bg-gray-800 text-white flex flex-col justify-between h-screen p-6 fixed">
+    <div>
+      <div class="mb-8 flex items-center space-x-3">
+        <div id="profileInitial" class="w-12 h-12 rounded-full bg-white text-primary flex items-center justify-center font-bold text-black">?</div>
+        <div>
+          <h2 class="text-lg font-semibold" id="userName">Loading...</h2>
+          <p class="text-sm text-gray-300">Masyarakat</p>
+        </div>
+      </div>
+      <nav class="space-y-4">
+        <button id="toggleTheme" class="w-full px-4 py-2 rounded bg-gray-700 hover:bg-white hover:text-gray-900 dark:hover:bg-white/10 transition">🌓 Mode</button>
+        <a href="login.html" class="block px-4 py-2 rounded bg-danger text-center hover:bg-red-700 transition">🚪 Logout</a>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Konten utama -->
+  <main class="ml-64 flex-1 p-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-accent mb-6 dark:drop-shadow-neon">📢 Dashboard Pengaduan</h1>
+
+    <form id="complaintForm" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg space-y-4 mb-10 border dark:border-white/10">
+      <div>
+        <label for="title" class="block text-sm font-semibold mb-1">Judul Pengaduan</label>
+        <input type="text" id="title" required
+          class="w-full px-4 py-2 rounded bg-white dark:bg-gray-900 border border-accent text-gray-800 dark:text-accent placeholder-gray-400 dark:placeholder-white/40" />
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-semibold mb-1">Deskripsi</label>
+        <textarea id="description" rows="4" required
+          class="w-full px-4 py-2 rounded bg-white dark:bg-gray-900 border border-accent text-gray-800 dark:text-accent placeholder-gray-400 dark:placeholder-white/40"></textarea>
+      </div>
+      <div>
+        <label for="complaintImage" class="block text-sm font-semibold mb-1">Bukti (Opsional)</label>
+        <input type="file" id="complaintImage" accept="image/*"
+          class="w-full px-4 py-2 rounded bg-white dark:bg-gray-900 border border-accent text-gray-800 dark:text-accent" />
+      </div>
+      <button type="submit"
+        class="w-full bg-gray-800 dark:bg-accent text-white font-semibold py-2 rounded-xl hover:scale-105 transition dark:hover:bg-cyan-300">
+        Kirim Pengaduan
+      </button>
+    </form>
+
+    <!-- ... (bagian sebelumnya tetap) ... -->
+
+<h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-accent">📄 Riwayat Pengaduan</h2>
+<div class="overflow-x-auto">
+  <table class="min-w-full bg-white dark:bg-gray-800 rounded-xl overflow-hidden text-left border dark:border-white/10">
+    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-accent">
+      <tr>
+        <th class="px-4 py-2">Judul</th>
+        <th class="px-4 py-2">Deskripsi</th>
+        <th class="px-4 py-2">Status</th>
+        <th class="px-4 py-2">Waktu</th>
+        <th class="px-4 py-2">Bukti</th>
+        <th class="px-4 py-2">Tanggapan</th> <!-- ✅ Tambahan -->
+      </tr>
+    </thead>
+    <tbody id="complaintList" class="text-gray-800 dark:text-white"></tbody>
+  </table>
+</div>
+  </main>
+
+  <!-- Script Utama -->
+  <script src="dashboard-masyarakat.js" defer></script>
+
+  <!-- Script Sidebar & Tema -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const root = document.documentElement;
+      const savedTheme = localStorage.getItem("theme");
+
+      if (savedTheme === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+
+      // Toggle Tema
+      const toggleTheme = document.getElementById("toggleTheme");
+      if (toggleTheme) {
+        toggleTheme.addEventListener("click", () => {
+          root.classList.toggle("dark");
+          localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+        });
+      }
+
+      // Tampilkan Username dari localStorage
+      const loggedUsername = localStorage.getItem("loggedInUser");
+      const userList = JSON.parse(localStorage.getItem("users")) || [];
+      const user = userList.find(u => u.username === loggedUsername);
+
+      const userNameElement = document.getElementById("userName");
+      const profileInitialElement = document.getElementById("profileInitial");
+
+      if (user && user.username) {
+        userNameElement.textContent = user.username;
+        profileInitialElement.textContent = user.username.charAt(0).toUpperCase();
+      } else {
+        userNameElement.textContent = "Masyarakat";
+        profileInitialElement.textContent = "?";
+      }
+    });
+  </script>
+</body>
+</html>
